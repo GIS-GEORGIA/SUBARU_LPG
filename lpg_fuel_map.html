@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subaru LPG/ბენზინი კალკულატორი + რუკა</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/togeojson/0.16.0/togeojson.min.js"></script>
+    <style>
+        /* Custom styles for sidebar and map */
+        #mini-map {
+            z-index: 400; /* Explicitly set map z-index lower than sidebar */
+        }
+        #octaneSidebar {
+            z-index: 2000; /* Ensure sidebar is above map */
+            transition: transform 0.3s ease-in-out;
+        }
+        #octaneSidebar.hidden {
+            transform: translateX(-100%);
+        }
+        @media (max-width: 640px) {
+            #octaneSidebar {
+                width: 100%;
+                max-width: 100%;
+            }
+            #resizeSidebarBtn {
+                display: none; /* Hide resize button on mobile */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+    <div class="container mx-auto px-4 py-6 max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Subaru LPG vs ბენზინი კალკულატორი + რუკა</h1>
+            <p class="text-gray-600 mt-2">ჭიათურა ↔ თბილისი მარშრუტი და საწვავის ხარჯის კალკულატორი</p>
+        </header>
+
+        <!-- Map Section -->
+        <section class="mb-8">
+            <div id="mini-map" class="w-full h-80 sm:h-96 rounded-lg shadow-md border border-gray-200"></div>
+        </section>
+
+        <!-- Calculator Section -->
+        <section class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-4">საწვავის კალკულატორი</h2>
+            <p class="text-gray-600 mb-4">შეიყვანეთ მონაცემები:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="B" class="block text-sm font-medium text-gray-700">B (ლ/100კმ) ბензინი</label>
+                    <input type="number" id="B" value="9.68" step="0.01" min="0" class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="D" class="block text-sm font-medium text-gray-700">D (მანძილი, კმ)</label>
+                    <input type="number" id="D" value="178.79" step="0.01" min="0" class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="price_lpg" class="block text-sm font-medium text-gray-700">LPG ფასი (₾/ლ)</label>
+                    <input type="number" id="price_lpg" value="1.40" step="0.01" min="0" class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="price_reg" class="block text-sm font-medium text-gray-700">ევრო რეგულარი (₾/ლ)</label>
+                    <input type="number" id="price_reg" value="3.04" step="0.01" min="0" class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="price_premium" class="block text-sm font-medium text-gray-700">ევრო პრემიუმი (₾/ლ)</label>
+                    <input type="number" id="price_premium" value="3.21" step="0.01" min="0" class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="price_super" class="block text-sm font-medium text-gray-700">სუპერი (₾/ლ)</label>
+                    <input type="number" id="price_super" value="3.59" step="0.01" min="0" class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">ოქტანობის ეფექტი (პროცენტული გაუმჯობესება)</h3>
+            <p class="text-gray-600 text-sm mb-4">მიუთითეთ საწვავის ეფექტურობის გაუმჯობესება (%). მაგ. 1.5% ნიშნავს 1.5%-ით ნაკლებ ხარჯს.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="octane_reg" class="block text-sm font-medium text-gray-700">ევრო რეგულარი (%)</label>
+                    <input type="number" id="octane_reg" value="0" step="0.1" min="0" max="100" class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="octane_premium" class="block text-sm font-medium text-gray-700">ევრო პრემიუმი (%)</label>
+                    <input type="number" id="octane_premium" value="1.5" step="0.1" min="0" max="100" class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="octane_super" class="block text-sm font-medium text-gray-700">სუპერი (%)</label>
+                    <input type="number" id="octane_super" value="3" step="0.1" min="0" max="100" class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="octane_lpg" class="block text-sm font-medium text-gray-700">LPG ნეგატივი (%)</label>
+                    <input type="number" id="octane_lpg" value="15" step="0.1" min="0" max="100" class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:space-x-4">
+                <button onclick="calculateFuel()" class="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 mb-2 sm:mb-0">გამოთვლა</button>
+                <button onclick="toggleOctaneInfo()" class="w-full sm:w-auto bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200">ოქტანობის შესახებ</button>
+            </div>
+            <div id="error" class="text-red-500 text-sm mt-2"></div>
+            <div id="results" class="mt-4 overflow-x-auto"></div>
+        </section>
+
+        <!-- Sidebar for Octane Information -->
+        <div id="octaneSidebar" class="fixed top-0 left-0 h-full w-80 bg-white p-6 shadow-lg z-[2000] hidden overflow-y-auto overflow-x-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-800">ბензინის ოქტანობის ეფექტი</h2>
+                <button id="resizeSidebarBtn" onclick="resizeSidebar()" class="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition duration-200">↔ ზომა</button>
+            </div>
+            <div id="octaneContent" class="text-gray-700">
+                <p class="mb-4">ბензინის ოქტანობა ნამდვილად გავლენას ახდენს წვის ეფექტურობაზე, ანუ — ერთსა და იმავე მანძილზე, სხვადასხვა ოქტანობის საწვავზე, მანქანა შეიძლება ოდნავ სხვადასხვა რაოდენობას დაწვავს.</p>
+                <h3 class="text-lg font-semibold mb-2">🔬 რატომ ხდება ასე:</h3>
+                <p class="mb-2"><strong>ოქტანური რიცხვი:</strong></p>
+                <p class="mb-2">ოქტანური რიცხვი (მაგ. 91, 95, 98) გვიჩვენებს საწვავის წვის გამძლეობას დეთონაციისადმი. მაღალი ოქტანობის საწვავი უფრო ნელა და სტაბილურად იწვის, რაც იძლევა:</p>
+                <ul class="list-disc pl-5 mb-4">
+                    <li>უფრო რბილ და სრულ წვას,</li>
+                    <li>მეტ ენერგიას თითოეული წვის ციკლიდან (efficiency),</li>
+                    <li>ზოგჯერ ოდნავ ნაკლებ საწვავის მოხმარებას.</li>
+                </ul>
+                <p class="mb-2"><strong>ძრავის ტიპზეა დამოკიდებული:</strong></p>
+                <ul class="list-disc pl-5 mb-4">
+                    <li>თუ ძრავი შექმნილია მაღალი შეკუმშვისთვის (high compression ratio) — ის უკეთ იყენებს 95/98 ოქტანიანს.</li>
+                    <li>თუ ძრავი გათვლილია 91–ზე, 98-ის გამოყენება არ გააუმჯობესებს საწვავის ეკონომიას — შეიძლება სულაც იგივე დაწვას.</li>
+                </ul>
+                <p class="mb-2"><strong>რეალური სხვაობა:</strong></p>
+                <p class="mb-4">პრაქტიკაში, განსხვავება ჩვეულებრივ არის 1–3%.</p>
+                <p class="mb-4">ანუ, თუ შენი Subaru 9.7 ლ /100კმ ხარჯავს “ევრო რეგულარზე” (3.04 ₾), მაშინ “სუპერზე” (3.59 ₾) შეიძლება დაწვას დაახლოებით 9.4 ლ /100კმ.</p>
+                <h3 class="text-lg font-semibold mb-2">💰 ფულად შედარება (მაგალითად, 178.8 კმ გზაზე):</h3>
+                <table class="w-full border-collapse mb-4">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border border-gray-300 p-2 text-left">საწვავი</th>
+                            <th class="border border-gray-300 p-2 text-left">ფასი ₾/ლ</th>
+                            <th class="border border-gray-300 p-2 text-left">ხარჯი ლ/100კმ</th>
+                            <th class="border border-gray-300 p-2 text-left">ფასი ₾/100კმ</th>
+                            <th class="border border-gray-300 p-2 text-left">ჯამი 178.8კმ-ზე</th>
+                            <th class="border border-gray-300 p-2 text-left">შენიშვნა</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-gray-300 p-2">LPG (გაზი)</td>
+                            <td class="border border-gray-300 p-2">1.40</td>
+                            <td class="border border-gray-300 p-2">10.6</td>
+                            <td class="border border-gray-300 p-2">14.84 ₾</td>
+                            <td class="border border-gray-300 p-2">26.55 ₾</td>
+                            <td class="border border-gray-300 p-2">ეკონომიური, 10% მეტი წვა</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 p-2">ევრო რეგულარი (91)</td>
+                            <td class="border border-gray-300 p-2">3.04</td>
+                            <td class="border border-gray-300 p-2">9.68</td>
+                            <td class="border border-gray-300 p-2">29.45 ₾</td>
+                            <td class="border border-gray-300 p-2">52.67 ₾</td>
+                            <td class="border border-gray-300 p-2">საბაზო ბენზინი</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 p-2">ევრო პრემიუმი (95)</td>
+                            <td class="border border-gray-300 p-2">3.21</td>
+                            <td class="border border-gray-300 p-2">9.55</td>
+                            <td class="border border-gray-300 p-2">30.64 ₾</td>
+                            <td class="border border-gray-300 p-2">54.79 ₾</td>
+                            <td class="border border-gray-300 p-2">1–2% უკეთესი წვა</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 p-2">სუპერი (98)</td>
+                            <td class="border border-gray-300 p-2">3.59</td>
+                            <td class="border border-gray-300 p-2">9.40</td>
+                            <td class="border border-gray-300 p-2">33.75 ₾</td>
+                            <td class="border border-gray-300 p-2">60.36 ₾</td>
+                            <td class="border border-gray-300 p-2">მაქსიმალური ოქტანობა, ძვირი</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3 class="text-lg font-semibold mb-2">➡️ დასკვნა:</h3>
+                <p class="mb-4">თუნდაც მაღალი ოქტანობის ბენზინი ოდნავ ნაკლებს დაწვავს, საბოლოოდ ფულად ისევ LPG რჩება ~50%–ით იაფი, ხოლო ბензინის შიგნით სხვაობა მცირეა (5–10 ლარი 180კმ-ზე).</p>
+            </div>
+            <button onclick="toggleOctaneInfo()" class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200">დახურვა</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Leaflet map
+        (function() {
+            const map = L.map('mini-map', { scrollWheelZoom: false }).setView([41.9, 44.2], 8);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            const chiatura = [42.285556, 43.267222];
+            const tbilisi = [41.78, 44.782778];
+            L.marker(chiatura).addTo(map).bindPopup('<strong>ჭიათურა</strong><br>42°17\'08"N 43°16\'02"E');
+            L.marker(tbilisi).addTo(map).bindPopup('<strong>თბილისი</strong><br>41°46\'48"N 44°46\'58"E');
+
+            const kmlString = `<?xml version="1.0" encoding="UTF-8"?>
+            <kml xmlns="http://www.opengis.net/kml/2.2">
+                <Document>
+                    <name>Chiatura_to_Tbilisi</name>
+                    <Placemark>
+                        <name>Route</name>
+                        <LineString>
+                            <tessellate>1</tessellate>
+                            <coordinates>
+                                ${chiatura[1]},${chiatura[0]},0 ${tbilisi[1]},${tbilisi[0]},0
+                            </coordinates>
+                        </LineString>
+                    </Placemark>
+                </Document>
+            </kml>`;
+
+            try {
+                const parser = new DOMParser();
+                const kmlDoc = parser.parseFromString(kmlString, 'text/xml');
+                const geojson = toGeoJSON.kml(kmlDoc);
+                L.geoJSON(geojson, {
+                    style: { color: '#ff0000', weight: 3, opacity: 0.8 }
+                }).addTo(map);
+
+                // Fit map to the route bounds
+                const bounds = L.latLngBounds([chiatura, tbilisi]);
+                map.fitBounds(bounds, { padding: [50, 50] });
+            } catch (e) {
+                console.error('KML parsing failed:', e);
+                document.getElementById('error').innerHTML = 'რუკის ჩატვირთვა ვერ მოხერხდა.';
+            }
+        })();
+
+        // Fuel calculator with octane efficiency
+        function calculateFuel() {
+            const errorDiv = document.getElementById('error');
+            errorDiv.innerHTML = '';
+
+            // Collect inputs
+            const inputs = {
+                B: parseFloat(document.getElementById('B').value),
+                D: parseFloat(document.getElementById('D').value),
+                price_lpg: parseFloat(document.getElementById('price_lpg').value),
+                price_reg: parseFloat(document.getElementById('price_reg').value),
+                price_premium: parseFloat(document.getElementById('price_premium').value),
+                price_super: parseFloat(document.getElementById('price_super').value),
+                octane_reg: parseFloat(document.getElementById('octane_reg').value),
+                octane_premium: parseFloat(document.getElementById('octane_premium').value),
+                octane_super: parseFloat(document.getElementById('octane_super').value),
+                octane_lpg: parseFloat(document.getElementById('octane_lpg').value)
+            };
+
+            // Validate inputs
+            for (const [key, value] of Object.entries(inputs)) {
+                if (isNaN(value) || value < 0 || value > 100) {
+                    errorDiv.innerHTML = 'გთხოვთ, შეიყვანოთ სწორი რიცხვითი მნიშვნელობები (0-100).';
+                    return;
+                }
+            }
+
+            const { B, D, price_lpg, price_reg, price_premium, price_super, octane_reg, octane_premium, octane_super, octane_lpg } = inputs;
+
+            // Calculate efficiency multipliers
+            const multipliers = {
+                reg: 1 - (octane_reg / 100),
+                premium: 1 - (octane_premium / 100),
+                super: 1 - (octane_super / 100),
+                lpg: 1 + (octane_lpg / 100)
+            };
+
+            // Results table
+            let results = `
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border border-gray-300 p-2 text-left">ტიპი</th>
+                            <th class="border border-gray-300 p-2 text-left">G (ლ/100კმ)</th>
+                            <th class="border border-gray-300 p-2 text-left">ლიტრები (L)</th>
+                            <th class="border border-gray-300 p-2 text-left">ფასი (₾)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            // Gasoline calculations
+            const L_reg = (B / 100) * D * multipliers.reg;
+            const L_premium = (B / 100) * D * multipliers.premium;
+            const L_super = (B / 100) * D * multipliers.super;
+            const cost_reg = (L_reg * price_reg).toFixed(2);
+            const cost_premium = (L_premium * price_premium).toFixed(2);
+            const cost_super = (L_super * price_super).toFixed(2);
+            results += `
+                <tr>
+                    <td class="border border-gray-300 p-2">ევრო რეგულარი (91)</td>
+                    <td class="border border-gray-300 p-2">${(B * multipliers.reg).toFixed(2)}</td>
+                    <td class="border border-gray-300 p-2">${L_reg.toFixed(2)}</td>
+                    <td class="border border-gray-300 p-2">${cost_reg}</td>
+                </tr>
+                <tr>
+                    <td class="border border-gray-300 p-2">ევრო პრემიუმი (95)</td>
+                    <td class="border border-gray-300 p-2">${(B * multipliers.premium).toFixed(2)}</td>
+                    <td class="border border-gray-300 p-2">${L_premium.toFixed(2)}</td>
+                    <td class="border border-gray-300 p-2">${cost_premium}</td>
+                </tr>
+                <tr>
+                    <td class="border border-gray-300 p-2">სუპერი (98)</td>
+                    <td class="border border-gray-300 p-2">${(B * multipliers.super).toFixed(2)}</td>
+                    <td class="border border-gray-300 p-2">${L_super.toFixed(2)}</td>
+                    <td class="border border-gray-300 p-2">${cost_super}</td>
+                </tr>
+            `;
+
+            // LPG calculations
+            const L_lpg = (B / 100) * D * multipliers.lpg;
+            const cost_lpg = (L_lpg * price_lpg).toFixed(2);
+            results += `
+                <tr>
+                    <td class="border border-gray-300 p-2">LPG</td>
+                    <td class="border border-gray-300 p-2">${(B * multipliers.lpg).toFixed(2)}</td>
+                    <td class="border border-gray-300 p-2">${L_lpg.toFixed(2)}</td>
+                    <td class="border border-gray-300 p-2">${cost_lpg}</td>
+                </tr>
+            `;
+
+            results += '</tbody></table>';
+            document.getElementById('results').innerHTML = results;
+        }
+
+        // Sidebar toggle function
+        function toggleOctaneInfo() {
+            const sidebar = document.getElementById('octaneSidebar');
+            sidebar.classList.toggle('hidden');
+        }
+
+        // Sidebar resize function
+        let currentWidthIndex = 0;
+        const sidebarWidths = ['w-80', 'w-[480px]', 'w-[640px]']; // 320px, 480px, 640px
+        function resizeSidebar() {
+            const sidebar = document.getElementById('octaneSidebar');
+            // Remove previous width class
+            sidebarWidths.forEach(width => sidebar.classList.remove(width));
+            // Cycle to next width
+            currentWidthIndex = (currentWidthIndex + 1) % sidebarWidths.length;
+            sidebar.classList.add(sidebarWidths[currentWidthIndex]);
+        }
+    </script>
+</body>
+</html>
