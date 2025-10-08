@@ -247,10 +247,11 @@
                 octane_lpg: parseFloat(document.getElementById('octane_lpg').value)
             };
 
+
             // Validate inputs
             for (const [key, value] of Object.entries(inputs)) {
-                if (isNaN(value) || value < 0 || value > 100) {
-                    errorDiv.innerHTML = 'გთხოვთ, შეიყვანოთ სწორი რიცხვითი მნიშვნელობები (0-100).';
+                if (isNaN(value) || value < 0) {
+                    errorDiv.innerHTML = 'გთხოვთ, შეიყვანოთ სწორი რიცხვითი მნიშვნელობები.';
                     return;
                 }
             }
