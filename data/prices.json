@@ -1,0 +1,720 @@
+{
+  "updated": "2026-08-04T18:19:42.581Z",
+  "updatedTbilisi": "4 აგვ. 2026, 22:19",
+  "currency": "GEL",
+  "sources": [
+    "priceshub.ge",
+    "geogid.ge"
+  ],
+  "categories": {
+    "regular": {
+      "label": "რეგულარი (92/93)",
+      "ranking": [
+        {
+          "company": "neogas",
+          "label": "ნეოგაზი",
+          "price": 3.45,
+          "product": "რეგულარი",
+          "octane": "92"
+        },
+        {
+          "company": "portal",
+          "label": "პორტალი",
+          "price": 3.54,
+          "product": "ევრო რეგულარი",
+          "octane": "92/93",
+          "cross": {
+            "geogid": 3.54,
+            "diff": 0
+          }
+        },
+        {
+          "company": "connect",
+          "label": "ქონექთი",
+          "price": 3.55,
+          "product": "ევრო რეგულარი",
+          "octane": "92",
+          "cross": {
+            "geogid": 3.54,
+            "diff": 0.01
+          }
+        },
+        {
+          "company": "socar",
+          "label": "სოკარი",
+          "price": 3.59,
+          "product": "ნანო ევრო რეგულარი",
+          "octane": "92/93",
+          "cross": {
+            "geogid": 3.59,
+            "diff": 0
+          }
+        },
+        {
+          "company": "gulf",
+          "label": "გალფი",
+          "price": 3.59,
+          "product": "G-Force ევრო რეგულარი",
+          "octane": "92",
+          "cross": {
+            "geogid": 3.59,
+            "diff": 0
+          }
+        },
+        {
+          "company": "lukoil",
+          "label": "ლუკოილი",
+          "price": 3.6,
+          "product": "ევრო რეგულარი",
+          "octane": "92"
+        },
+        {
+          "company": "rompetrol",
+          "label": "რომპეტროლი",
+          "price": 3.63,
+          "product": "ევრო რეგულარი",
+          "octane": "92/93"
+        },
+        {
+          "company": "wissol",
+          "label": "ვისოლი",
+          "price": 3.68,
+          "product": "ევრო რეგულარი",
+          "octane": "92",
+          "cross": {
+            "geogid": 3.68,
+            "diff": 0
+          }
+        }
+      ]
+    },
+    "premium": {
+      "label": "პრემიუმი (95)",
+      "ranking": [
+        {
+          "company": "neogas",
+          "label": "ნეოგაზი",
+          "price": 3.6,
+          "product": "პრემიუმი",
+          "octane": "95"
+        },
+        {
+          "company": "portal",
+          "label": "პორტალი",
+          "price": 3.69,
+          "product": "ეფექტ პრემიუმი",
+          "octane": "95",
+          "cross": {
+            "geogid": 3.69,
+            "diff": 0
+          }
+        },
+        {
+          "company": "connect",
+          "label": "ქონექთი",
+          "price": 3.7,
+          "product": "ნანო პრემიუმი",
+          "octane": "95",
+          "cross": {
+            "geogid": 3.69,
+            "diff": 0.01
+          }
+        },
+        {
+          "company": "socar",
+          "label": "სოკარი",
+          "price": 3.73,
+          "product": "ნანო პრემიუმი",
+          "octane": "95",
+          "cross": {
+            "geogid": 3.73,
+            "diff": 0
+          }
+        },
+        {
+          "company": "lukoil",
+          "label": "ლუკოილი",
+          "price": 3.75,
+          "product": "პრემიუმ ექტო",
+          "octane": "95"
+        },
+        {
+          "company": "gulf",
+          "label": "გალფი",
+          "price": 3.77,
+          "product": "G-Force პრემიუმი",
+          "octane": "95",
+          "cross": {
+            "geogid": 3.77,
+            "diff": 0
+          }
+        },
+        {
+          "company": "rompetrol",
+          "label": "რომპეტროლი",
+          "price": 3.78,
+          "product": "ეფიქს პრემიუმი",
+          "octane": "95"
+        },
+        {
+          "company": "wissol",
+          "label": "ვისოლი",
+          "price": 3.82,
+          "product": "ეკო პრემიუმი",
+          "octane": "95",
+          "cross": {
+            "geogid": 3.82,
+            "diff": 0
+          }
+        }
+      ]
+    },
+    "super": {
+      "label": "სუპერი (98)",
+      "ranking": [
+        {
+          "company": "connect",
+          "label": "ქონექთი",
+          "price": 3.85,
+          "product": "ნანო სუპერი",
+          "octane": "98",
+          "cross": {
+            "geogid": 3.89,
+            "diff": -0.04
+          }
+        },
+        {
+          "company": "portal",
+          "label": "პორტალი",
+          "price": 3.89,
+          "product": "ეფექტ სუპერი",
+          "octane": "98",
+          "cross": {
+            "geogid": 3.89,
+            "diff": 0
+          }
+        },
+        {
+          "company": "socar",
+          "label": "სოკარი",
+          "price": 4.12,
+          "product": "ნანო სუპერი",
+          "octane": "98",
+          "cross": {
+            "geogid": 4.12,
+            "diff": 0
+          }
+        },
+        {
+          "company": "lukoil",
+          "label": "ლუკოილი",
+          "price": 4.18,
+          "product": "სუპერ ექტო",
+          "octane": "98"
+        },
+        {
+          "company": "rompetrol",
+          "label": "რომპეტროლი",
+          "price": 4.19,
+          "product": "ეფიქს სუპერი",
+          "octane": "98"
+        },
+        {
+          "company": "wissol",
+          "label": "ვისოლი",
+          "price": 4.23,
+          "product": "ეკო სუპერი",
+          "octane": "98",
+          "cross": {
+            "geogid": 4.23,
+            "diff": 0
+          }
+        },
+        {
+          "company": "gulf",
+          "label": "გალფი",
+          "price": 4.27,
+          "product": "G-Force სუპერი",
+          "octane": "98",
+          "cross": {
+            "geogid": 4.27,
+            "diff": 0
+          }
+        }
+      ]
+    },
+    "diesel": {
+      "label": "დიზელი",
+      "ranking": [
+        {
+          "company": "neogas",
+          "label": "ნეოგაზი",
+          "price": 3.55,
+          "product": "ევრო დიზელი",
+          "octane": "51"
+        },
+        {
+          "company": "connect",
+          "label": "ქონექთი",
+          "price": 3.85,
+          "product": "დიზელი",
+          "octane": "51",
+          "cross": {
+            "geogid": 3.89,
+            "diff": -0.04
+          }
+        },
+        {
+          "company": "portal",
+          "label": "პორტალი",
+          "price": 3.89,
+          "product": "ეფექტ დიზელი",
+          "octane": "51",
+          "cross": {
+            "geogid": 3.89,
+            "diff": 0
+          }
+        },
+        {
+          "company": "socar",
+          "label": "სოკარი",
+          "price": 3.95,
+          "product": "ევრო 5 დიზელი",
+          "octane": "53",
+          "cross": {
+            "geogid": 3.95,
+            "diff": 0
+          }
+        },
+        {
+          "company": "rompetrol",
+          "label": "რომპეტროლი",
+          "price": 3.99,
+          "product": "ევრო დიზელი",
+          "octane": "51"
+        },
+        {
+          "company": "wissol",
+          "label": "ვისოლი",
+          "price": 4.04,
+          "product": "დიზელ ენერჯი",
+          "octane": "51",
+          "cross": {
+            "geogid": 4.04,
+            "diff": 0
+          }
+        },
+        {
+          "company": "lukoil",
+          "label": "ლუკოილი",
+          "price": 4.04,
+          "product": "ევრო დიზელი",
+          "octane": "51"
+        },
+        {
+          "company": "gulf",
+          "label": "გალფი",
+          "price": 4.17,
+          "product": "ევრო დიზელი",
+          "octane": "51",
+          "cross": {
+            "geogid": 4.17,
+            "diff": 0
+          }
+        }
+      ]
+    },
+    "lpg": {
+      "label": "თხევადი გაზი (LPG)",
+      "ranking": [
+        {
+          "company": "neogas",
+          "label": "ნეოგაზი",
+          "price": 1.7,
+          "product": "თხევადი გაზი (LPG)",
+          "octane": ""
+        },
+        {
+          "company": "socar",
+          "label": "სოკარი",
+          "price": 2.05,
+          "product": "თხევადი გაზი (LPG)",
+          "octane": "",
+          "cross": {
+            "geogid": 2.05,
+            "diff": 0
+          }
+        }
+      ]
+    },
+    "cng": {
+      "label": "ბუნებრივი აირი (CNG)",
+      "ranking": [
+        {
+          "company": "socar",
+          "label": "სოკარი",
+          "price": 1.6,
+          "product": "ბუნებრივი აირი (CNG)",
+          "octane": "",
+          "cross": {
+            "geogid": 1.6,
+            "diff": 0
+          }
+        },
+        {
+          "company": "neogas",
+          "label": "ნეოგაზი",
+          "price": 1.6,
+          "product": "ბუნებრივი აირი (CNG)",
+          "octane": ""
+        },
+        {
+          "company": "wissol",
+          "label": "ვისოლი",
+          "price": 1.64,
+          "product": "ბუნებრივი აირი (CNG)",
+          "octane": ""
+        }
+      ]
+    }
+  },
+  "cheapest": {
+    "regular": {
+      "company": "neogas",
+      "label": "ნეოგაზი",
+      "price": 3.45
+    },
+    "premium": {
+      "company": "neogas",
+      "label": "ნეოგაზი",
+      "price": 3.6
+    },
+    "super": {
+      "company": "connect",
+      "label": "ქონექთი",
+      "price": 3.85
+    },
+    "diesel": {
+      "company": "neogas",
+      "label": "ნეოგაზი",
+      "price": 3.55
+    },
+    "lpg": {
+      "company": "neogas",
+      "label": "ნეოგაზი",
+      "price": 1.7
+    },
+    "cng": {
+      "company": "socar",
+      "label": "სოკარი",
+      "price": 1.6
+    }
+  },
+  "companies": {
+    "socar": {
+      "label": "სოკარი",
+      "products": [
+        {
+          "name": "ნანო სუპერი",
+          "octane": "98",
+          "price": 4.12,
+          "category": "super"
+        },
+        {
+          "name": "ნანო პრემიუმი",
+          "octane": "95",
+          "price": 3.73,
+          "category": "premium"
+        },
+        {
+          "name": "ნანო ევრო რეგულარი",
+          "octane": "92/93",
+          "price": 3.59,
+          "category": "regular"
+        },
+        {
+          "name": "ნანო ევრო 5 დიზელი",
+          "octane": "53",
+          "price": 4.05,
+          "category": "diesel"
+        },
+        {
+          "name": "ევრო 5 დიზელი",
+          "octane": "53",
+          "price": 3.95,
+          "category": "diesel"
+        },
+        {
+          "name": "თხევადი გაზი (LPG)",
+          "octane": "",
+          "price": 2.05,
+          "category": "lpg"
+        },
+        {
+          "name": "ბუნებრივი აირი (CNG)",
+          "octane": "",
+          "price": 1.6,
+          "category": "cng"
+        }
+      ]
+    },
+    "gulf": {
+      "label": "გალფი",
+      "products": [
+        {
+          "name": "G-Force სუპერი",
+          "octane": "98",
+          "price": 4.27,
+          "category": "super"
+        },
+        {
+          "name": "G-Force პრემიუმი",
+          "octane": "95",
+          "price": 3.77,
+          "category": "premium"
+        },
+        {
+          "name": "G-Force ევრო რეგულარი",
+          "octane": "92",
+          "price": 3.59,
+          "category": "regular"
+        },
+        {
+          "name": "ევრო რეგულარი",
+          "octane": "92",
+          "price": 3.59,
+          "category": "regular"
+        },
+        {
+          "name": "G-Force ევრო დიზელი",
+          "octane": "51",
+          "price": 4.27,
+          "category": "diesel"
+        },
+        {
+          "name": "ევრო დიზელი",
+          "octane": "51",
+          "price": 4.17,
+          "category": "diesel"
+        }
+      ]
+    },
+    "wissol": {
+      "label": "ვისოლი",
+      "products": [
+        {
+          "name": "ეკო სუპერი",
+          "octane": "98",
+          "price": 4.23,
+          "category": "super"
+        },
+        {
+          "name": "ეკო პრემიუმი",
+          "octane": "95",
+          "price": 3.82,
+          "category": "premium"
+        },
+        {
+          "name": "ევრო რეგულარი",
+          "octane": "92",
+          "price": 3.68,
+          "category": "regular"
+        },
+        {
+          "name": "ეკო დიზელი",
+          "octane": "51",
+          "price": 4.09,
+          "category": "diesel"
+        },
+        {
+          "name": "ევრო დიზელი",
+          "octane": "51",
+          "price": 4.14,
+          "category": "diesel"
+        },
+        {
+          "name": "დიზელ ენერჯი",
+          "octane": "51",
+          "price": 4.04,
+          "category": "diesel"
+        },
+        {
+          "name": "ბუნებრივი აირი (CNG)",
+          "octane": "",
+          "price": 1.64,
+          "category": "cng"
+        }
+      ]
+    },
+    "rompetrol": {
+      "label": "რომპეტროლი",
+      "products": [
+        {
+          "name": "ეფიქს სუპერი",
+          "octane": "98",
+          "price": 4.19,
+          "category": "super"
+        },
+        {
+          "name": "ეფიქს პრემიუმი",
+          "octane": "95",
+          "price": 3.78,
+          "category": "premium"
+        },
+        {
+          "name": "ევრო რეგულარი",
+          "octane": "92/93",
+          "price": 3.63,
+          "category": "regular"
+        },
+        {
+          "name": "ეფიქს ევრო დიზელი",
+          "octane": "51",
+          "price": 4.09,
+          "category": "diesel"
+        },
+        {
+          "name": "ევრო დიზელი",
+          "octane": "51",
+          "price": 3.99,
+          "category": "diesel"
+        }
+      ]
+    },
+    "portal": {
+      "label": "პორტალი",
+      "products": [
+        {
+          "name": "ეფექტ სუპერი",
+          "octane": "98",
+          "price": 3.89,
+          "category": "super"
+        },
+        {
+          "name": "ეფექტ პრემიუმი",
+          "octane": "95",
+          "price": 3.69,
+          "category": "premium"
+        },
+        {
+          "name": "ევრო რეგულარი",
+          "octane": "92/93",
+          "price": 3.54,
+          "category": "regular"
+        },
+        {
+          "name": "ევრო დიზელი",
+          "octane": "51",
+          "price": 4.09,
+          "category": "diesel"
+        },
+        {
+          "name": "ეფექტ დიზელი",
+          "octane": "51",
+          "price": 3.89,
+          "category": "diesel"
+        }
+      ]
+    },
+    "connect": {
+      "label": "ქონექთი",
+      "products": [
+        {
+          "name": "ნანო სუპერი",
+          "octane": "98",
+          "price": 3.85,
+          "category": "super"
+        },
+        {
+          "name": "ნანო პრემიუმი",
+          "octane": "95",
+          "price": 3.7,
+          "category": "premium"
+        },
+        {
+          "name": "ევრო რეგულარი",
+          "octane": "92",
+          "price": 3.55,
+          "category": "regular"
+        },
+        {
+          "name": "ევრო დიზელი",
+          "octane": "51",
+          "price": 4.05,
+          "category": "diesel"
+        },
+        {
+          "name": "დიზელი",
+          "octane": "51",
+          "price": 3.85,
+          "category": "diesel"
+        }
+      ]
+    },
+    "lukoil": {
+      "label": "ლუკოილი",
+      "products": [
+        {
+          "name": "სუპერ ექტო",
+          "octane": "98",
+          "price": 4.18,
+          "category": "super"
+        },
+        {
+          "name": "პრემიუმ ექტო",
+          "octane": "95",
+          "price": 3.75,
+          "category": "premium"
+        },
+        {
+          "name": "ევრო რეგულარი",
+          "octane": "92",
+          "price": 3.6,
+          "category": "regular"
+        },
+        {
+          "name": "ევრო დიზელი",
+          "octane": "51",
+          "price": 4.04,
+          "category": "diesel"
+        }
+      ]
+    },
+    "neogas": {
+      "label": "ნეოგაზი",
+      "products": [
+        {
+          "name": "პრემიუმი",
+          "octane": "95",
+          "price": 3.6,
+          "category": "premium"
+        },
+        {
+          "name": "რეგულარი",
+          "octane": "92",
+          "price": 3.45,
+          "category": "regular"
+        },
+        {
+          "name": "ევრო დიზელი",
+          "octane": "51",
+          "price": 3.55,
+          "category": "diesel"
+        },
+        {
+          "name": "ბუნებრივი აირი (CNG)",
+          "octane": "",
+          "price": 1.6,
+          "category": "cng"
+        },
+        {
+          "name": "თხევადი გაზი (LPG)",
+          "octane": "",
+          "price": 1.7,
+          "category": "lpg"
+        }
+      ]
+    }
+  },
+  "discrepancies": []
+}

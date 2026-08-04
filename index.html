@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>LPG/ბენზინი კალკულატორი — Subaru Forester 2.5</title>
+    <title>საწვავის ხარჯის კალკულატორი — LPG / ბენზინი</title>
 
-    <!-- retain existing libs / styling (Tailwind + Leaflet) -->
+    <!-- libs / styling (Tailwind + Leaflet) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/togeojson/0.16.0/togeojson.min.js"></script>
 
     <style>
         /* keep your original custom styles and ensure new elements match */
@@ -27,13 +26,53 @@
 <body class="bg-gray-100 font-sans antialiased">
     <div class="container mx-auto px-4 py-6 max-w-4xl">
         <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Subaru ✨ — ჭიათურა ↔ თბილისი</h1>
-            <p class="text-gray-600 mt-2">მარშრუტი და საწვავის ხარჯების კალკულატორი (Forester 2016 · 2.5 · CVT)</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">⛽ საწვავის ხარჯის კალკულატორი</h1>
+            <p class="text-gray-600 mt-2">გაზომეთ ნებისმიერი მარშრუტი რუკაზე და შეადარეთ LPG / ბენზინის ხარჯი</p>
         </header>
 
-        <!-- Map Section (unchanged visual) -->
+        <!-- Map Section — universal A→B measuring / routing tool -->
         <section class="mb-8">
-            <div id="mini-map" class="w-full h-80 sm:h-96 rounded-lg shadow-md border border-gray-200"></div>
+            <div class="bg-white p-4 rounded-t-lg shadow-md border border-gray-200 border-b-0">
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+                    <span class="text-sm font-medium text-gray-700">რეჟიმი:</span>
+                    <label class="text-sm inline-flex items-center gap-1 cursor-pointer">
+                        <input type="radio" name="measureMode" value="route" checked> მარშრუტი (გზებით)
+                    </label>
+                    <label class="text-sm inline-flex items-center gap-1 cursor-pointer">
+                        <input type="radio" name="measureMode" value="line"> სწორი ხაზი
+                    </label>
+                    <button id="clearMeasure" class="ml-auto bg-gray-200 text-gray-800 px-3 py-1.5 rounded-md text-sm hover:bg-gray-300">გასუფთავება</button>
+                </div>
+                <p id="measureHint" class="text-xs text-gray-500 mt-2">დააკლიკეთ რუკაზე <strong>A</strong> წერტილი, შემდეგ <strong>B</strong> — მანძილი გამოითვლება ავტომატურად.</p>
+                <div class="flex flex-wrap items-center gap-3 mt-2">
+                    <div class="text-lg font-semibold text-gray-800">მანძილი: <span id="measureDist">—</span></div>
+                    <button id="distToCalc" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed" disabled>მანძილი კალკულატორში →</button>
+                </div>
+            </div>
+            <div id="mini-map" class="w-full h-80 sm:h-96 rounded-b-lg shadow-md border border-gray-200"></div>
+        </section>
+
+        <!-- === Live Fuel Prices Section === -->
+        <section class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 gap-2">
+                <h2 class="text-xl md:text-2xl font-semibold text-gray-800">⛽ დღევანდელი ფასები</h2>
+                <span id="lp-updated" class="text-xs text-gray-500"></span>
+            </div>
+
+            <!-- ყველაზე იაფის ზოლი კატეგორიების მიხედვით -->
+            <div id="lp-chips" class="flex flex-wrap gap-2 mb-4"></div>
+
+            <!-- კატეგორიის ამრჩევი + სრული რანჟირება -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
+                <label for="lp-category" class="text-sm font-medium text-gray-700">კატეგორია:</label>
+                <select id="lp-category" class="p-2 border border-gray-300 rounded-md text-sm"></select>
+                <button id="lp-fill" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-700">
+                    ↓ ყველაზე იაფი კალკულატორში
+                </button>
+            </div>
+
+            <div id="lp-ranking" class="overflow-x-auto"></div>
+            <div id="lp-note" class="text-xs text-gray-500 mt-3"></div>
         </section>
 
         <!-- Calculator Section -->
@@ -49,7 +88,7 @@
                 </div>
                 <div>
                     <label for="D" class="block text-sm font-medium text-gray-700">D (მანძილი, კმ)</label>
-                    <input id="D" type="number" step="0.01" value="178.79" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                    <input id="D" type="number" step="0.01" value="100" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
                 </div>
 
                 <div>
@@ -155,35 +194,112 @@
 
     <!-- === SCRIPTS: map + calculator logic === -->
     <script>
-    // ---- Map init (kept from your original file) ----
+    // ---- Universal A→B measuring / routing tool ----
     (function() {
-        const map = L.map('mini-map', { scrollWheelZoom: false }).setView([41.9, 44.2], 8);
+        const map = L.map('mini-map').setView([42.0, 43.6], 7); // მთელი საქართველოს ხედი
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        const chiatura = [42.285556, 43.267222];
-        const tbilisi = [41.78, 44.782778];
-        L.marker(chiatura).addTo(map).bindPopup('<strong>ჭიათურა</strong>');
-        L.marker(tbilisi).addTo(map).bindPopup('<strong>თბილისი</strong>');
+        let ptA = null, ptB = null, markerA = null, markerB = null, line = null, measuredKm = null;
+        const distEl = document.getElementById('measureDist');
+        const hintEl = document.getElementById('measureHint');
+        const toCalcBtn = document.getElementById('distToCalc');
 
-        // Try to parse embedded KML route (if present in your original file)
-        try {
-            const kmlString = `<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Route</name><Placemark><LineString><coordinates>
-            <!-- your long coordinates omitted here for brevity; original file keeps them -->
-            </coordinates></LineString></Placemark></Document></kml>`;
-            const parser = new DOMParser();
-            const kmlDoc = parser.parseFromString(kmlString, 'text/xml');
-            const geojson = toGeoJSON.kml(kmlDoc);
-            L.geoJSON(geojson, { style: { color: '#2b6cb0', weight: 4, opacity: 0.8 } }).addTo(map);
-            // fit to route bounds (fallback to markers)
-            // Note: if geojson has no bbox, use marker bounds:
-            const bounds = L.latLngBounds([chiatura, tbilisi]);
-            map.fitBounds(bounds, { padding: [40,40] });
-        } catch (e) {
-            console.warn('KML parsing failed or omitted content:', e);
+        const mode = () => (document.querySelector('input[name="measureMode"]:checked') || {}).value || 'route';
+
+        // სწორი ხაზის მანძილი (კმ)
+        function haversine(a, b) {
+            const R = 6371, toR = d => d * Math.PI / 180;
+            const dLat = toR(b[0] - a[0]), dLon = toR(b[1] - a[1]);
+            const s = Math.sin(dLat / 2) ** 2 + Math.cos(toR(a[0])) * Math.cos(toR(b[0])) * Math.sin(dLon / 2) ** 2;
+            return 2 * R * Math.asin(Math.sqrt(s));
         }
+
+        function pin(latlng, label, color) {
+            return L.marker(latlng, {
+                title: label,
+                icon: L.divIcon({
+                    className: '',
+                    html: `<div style="background:${color};color:#fff;font-weight:bold;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.4)">${label}</div>`,
+                    iconSize: [26, 26], iconAnchor: [13, 13]
+                })
+            }).addTo(map);
+        }
+
+        function drawLine(coords, color, dashed) {
+            if (line) map.removeLayer(line);
+            line = L.polyline(coords, { color, weight: 4, opacity: 0.85, dashArray: dashed ? '6,8' : null }).addTo(map);
+            map.fitBounds(line.getBounds(), { padding: [40, 40] });
+        }
+
+        function setDistance(km, kind) {
+            measuredKm = km;
+            distEl.textContent = km.toFixed(2) + ' კმ' + (kind ? ' · ' + kind : '');
+            toCalcBtn.disabled = false;
+        }
+
+        function clearAll() {
+            [markerA, markerB, line].forEach(l => l && map.removeLayer(l));
+            markerA = markerB = line = ptA = ptB = measuredKm = null;
+            distEl.textContent = '—';
+            toCalcBtn.disabled = true;
+            hintEl.innerHTML = 'დააკლიკეთ რუკაზე <strong>A</strong> წერტილი, შემდეგ <strong>B</strong> — მანძილი გამოითვლება ავტომატურად.';
+        }
+
+        async function compute() {
+            const straight = haversine(ptA, ptB);
+            if (mode() === 'line') {
+                drawLine([ptA, ptB], '#2b6cb0', true);
+                setDistance(straight, 'სწორი ხაზი');
+                hintEl.innerHTML = 'ხელახლა დააკლიკეთ ახალი <strong>A</strong> წერტილისთვის.';
+                return;
+            }
+            hintEl.textContent = 'მარშრუტი იტვირთება…';
+            try {
+                const url = `https://router.project-osrm.org/route/v1/driving/${ptA[1]},${ptA[0]};${ptB[1]},${ptB[0]}?overview=full&geometries=geojson`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const j = await res.json();
+                const route = j.routes && j.routes[0];
+                if (!route) throw new Error('no route');
+                drawLine(route.geometry.coordinates.map(c => [c[1], c[0]]), '#2b6cb0', false);
+                setDistance(route.distance / 1000, 'გზებით');
+                hintEl.innerHTML = 'მარშრუტი დათვლილია. ხელახლა დააკლიკეთ ახალი <strong>A</strong> წერტილისთვის.';
+            } catch (e) {
+                drawLine([ptA, ptB], '#e53e3e', true);
+                setDistance(straight, 'სწორი ხაზი (მარშრუტი მიუწვდომელია)');
+                hintEl.textContent = 'მარშრუტის სერვისი ვერ ჩაიტვირთა — ნაჩვენებია სწორი ხაზის მანძილი.';
+            }
+        }
+
+        map.on('click', e => {
+            const ll = [e.latlng.lat, e.latlng.lng];
+            if (!ptA || (ptA && ptB)) {
+                // ახალი გაზომვის დაწყება
+                [markerA, markerB, line].forEach(l => l && map.removeLayer(l));
+                markerB = line = ptB = measuredKm = null;
+                ptA = ll; markerA = pin(ll, 'A', '#38a169');
+                distEl.textContent = '—'; toCalcBtn.disabled = true;
+                hintEl.innerHTML = 'ახლა დააკლიკეთ <strong>B</strong> წერტილი.';
+            } else {
+                ptB = ll; markerB = pin(ll, 'B', '#e53e3e');
+                compute();
+            }
+        });
+
+        document.getElementById('clearMeasure').addEventListener('click', clearAll);
+        document.querySelectorAll('input[name="measureMode"]').forEach(r =>
+            r.addEventListener('change', () => { if (ptA && ptB) compute(); }));
+        toCalcBtn.addEventListener('click', () => {
+            if (measuredKm == null) return;
+            const D = document.getElementById('D');
+            if (D) D.value = measuredKm.toFixed(2);
+            if (typeof calculateFuel === 'function') calculateFuel();
+            const res = document.getElementById('results');
+            if (res) res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
     })();
 
     // ---- Utility format function ----
@@ -194,10 +310,10 @@
 
     // ---- Fill Forester defaults ----
     function fillForesterDefaults() {
+        // მხოლოდ მანქანის პარამეტრები — მანძილი/ასამაღლება მარშრუტზეა დამოკიდებული
         document.getElementById('vehicle_mass').value = 1540;
         document.getElementById('efficiency').value = 25;
         document.getElementById('B').value = 9.68;
-        document.getElementById('total_ascent').value = 616;
         alert('Forester 2016 (2.5, curb ≈1540 kg) პარამეტრები შევსებულია.');
     }
 
@@ -337,6 +453,101 @@
         currentWidthIndex = (currentWidthIndex + 1) % sidebarWidths.length;
         sidebar.classList.add(sidebarWidths[currentWidthIndex]);
     }
+    </script>
+
+    <!-- === Live Fuel Prices logic (data/prices.json) === -->
+    <script>
+    (function () {
+        const medal = i => (i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + '.');
+        // კატეგორია → კალკულატორის ფასის ველი (რომელიც auto-fill-ს ეხება)
+        const FILL_MAP = { lpg: 'price_lpg', regular: 'price_reg', premium: 'price_premium', super: 'price_super' };
+        let DATA = null;
+
+        function renderChips() {
+            const box = document.getElementById('lp-chips');
+            box.innerHTML = '';
+            for (const [cat, meta] of Object.entries(DATA.categories)) {
+                const c = DATA.cheapest[cat];
+                if (!c) continue;
+                const chip = document.createElement('span');
+                chip.className = 'inline-flex items-center gap-1 bg-green-50 border border-green-200 text-green-800 text-xs px-3 py-1 rounded-full';
+                chip.innerHTML = `<strong>${meta.label.replace(/\s*\(.*\)/, '')}</strong>: ${c.label} · ${c.price.toFixed(2)}₾`;
+                box.appendChild(chip);
+            }
+        }
+
+        function renderRanking(cat) {
+            const wrap = document.getElementById('lp-ranking');
+            const c = DATA.categories[cat];
+            if (!c || !c.ranking.length) { wrap.innerHTML = '<p class="text-gray-500 text-sm">მონაცემი არ არის.</p>'; return; }
+            let html = '<table class="w-full text-sm"><thead><tr class="text-left text-gray-500 border-b">' +
+                '<th class="py-1 pr-2">#</th><th class="py-1 pr-2">კომპანია</th>' +
+                '<th class="py-1 pr-2 text-right">ფასი (₾)</th><th class="py-1 pl-2">პროდუქტი</th></tr></thead><tbody>';
+            c.ranking.forEach((r, i) => {
+                const best = i === 0 ? 'bg-green-50 font-semibold' : '';
+                const check = r.cross && Math.abs(r.cross.diff) <= 0.05 ? ' <span title="ორივე წყარო ეთანხმება" class="text-green-600">✓</span>' : '';
+                html += `<tr class="${best} border-b border-gray-100">` +
+                    `<td class="py-1.5 pr-2">${medal(i)}</td>` +
+                    `<td class="py-1.5 pr-2">${r.label}${check}</td>` +
+                    `<td class="py-1.5 pr-2 text-right">${r.price.toFixed(2)}</td>` +
+                    `<td class="py-1.5 pl-2 text-gray-500">${r.product || ''}</td></tr>`;
+            });
+            html += '</tbody></table>';
+            wrap.innerHTML = html;
+        }
+
+        function fillCalculator() {
+            let filled = [];
+            for (const [cat, field] of Object.entries(FILL_MAP)) {
+                const c = DATA.cheapest[cat];
+                const el = document.getElementById(field);
+                if (c && el) { el.value = c.price.toFixed(2); filled.push(cat); }
+            }
+            const err = document.getElementById('error');
+            if (err) { err.textContent = ''; }
+            if (typeof calculateFuel === 'function') calculateFuel();
+            const note = document.getElementById('lp-note');
+            if (note && filled.length) {
+                const prev = note.getAttribute('data-base') || note.textContent;
+                note.setAttribute('data-base', prev);
+                note.textContent = 'კალკულატორი შევსებულია ყველაზე იაფი ფასებით. ' + prev;
+            }
+        }
+
+        function init(data) {
+            DATA = data;
+            document.getElementById('lp-updated').textContent = 'განახლდა: ' + (data.updatedTbilisi || data.updated);
+            const note = document.getElementById('lp-note');
+            let noteTxt = 'წყარო: ' + (data.sources || []).join(', ') + '. ჯვ. შემოწმება: ✓.';
+            if (data.discrepancies && data.discrepancies.length) {
+                noteTxt += ' ⚠ ' + data.discrepancies.length + ' პოზიციაზე წყაროები არ ემთხვევა.';
+            }
+            note.textContent = noteTxt;
+
+            const sel = document.getElementById('lp-category');
+            for (const [cat, meta] of Object.entries(data.categories)) {
+                if (!meta.ranking.length) continue;
+                const opt = document.createElement('option');
+                opt.value = cat; opt.textContent = meta.label;
+                sel.appendChild(opt);
+            }
+            sel.value = data.categories.regular ? 'regular' : sel.options[0]?.value;
+            sel.addEventListener('change', () => renderRanking(sel.value));
+            document.getElementById('lp-fill').addEventListener('click', fillCalculator);
+
+            renderChips();
+            renderRanking(sel.value);
+        }
+
+        fetch('data/prices.json', { cache: 'no-store' })
+            .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+            .then(init)
+            .catch(err => {
+                document.getElementById('lp-ranking').innerHTML =
+                    '<p class="text-red-500 text-sm">ფასების ჩატვირთვა ვერ მოხერხდა (' + err.message + '). ' +
+                    'მონაცემი ვერ ხელმისაწვდომია ლოკალურ file:// გახსნისას — იმუშავებს გამოქვეყნებულ საიტზე.</p>';
+            });
+    })();
     </script>
 </body>
 </html>
