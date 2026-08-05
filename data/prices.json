@@ -1,6 +1,6 @@
 {
-  "updated": "2026-08-05T03:32:28.139Z",
-  "updatedTbilisi": "5 აგვ. 2026, 07:32",
+  "updated": "2026-08-05T09:05:29.553Z",
+  "updatedTbilisi": "5 აგვ. 2026, 13:05",
   "currency": "GEL",
   "sources": [
     "priceshub.ge",
@@ -213,13 +213,6 @@
           "octane": "98"
         },
         {
-          "company": "rompetrol",
-          "label": "რომპეტროლი",
-          "price": 4.19,
-          "product": "ეფიქს სუპერი",
-          "octane": "98"
-        },
-        {
           "company": "wissol",
           "label": "ვისოლი",
           "price": 4.23,
@@ -240,6 +233,13 @@
             "geogid": 4.27,
             "diff": 0
           }
+        },
+        {
+          "company": "rompetrol",
+          "label": "რომპეტროლი",
+          "price": 4.27,
+          "product": "ეფიქს სუპერი",
+          "octane": "98"
         }
       ]
     },
@@ -287,13 +287,6 @@
           }
         },
         {
-          "company": "rompetrol",
-          "label": "რომპეტროლი",
-          "price": 3.99,
-          "product": "ევრო დიზელი",
-          "octane": "51"
-        },
-        {
           "company": "lukoil",
           "label": "ლუკოილი",
           "price": 4.04,
@@ -307,9 +300,16 @@
           "product": "დიზელ ენერჯი",
           "octane": "51",
           "cross": {
-            "geogid": 4.04,
-            "diff": 0.1
+            "geogid": 4.14,
+            "diff": 0
           }
+        },
+        {
+          "company": "rompetrol",
+          "label": "რომპეტროლი",
+          "price": 4.14,
+          "product": "ევრო დიზელი",
+          "octane": "51"
         },
         {
           "company": "gulf",
@@ -552,7 +552,7 @@
         {
           "name": "ეფიქს სუპერი",
           "octane": "98",
-          "price": 4.19,
+          "price": 4.27,
           "category": "super"
         },
         {
@@ -570,13 +570,13 @@
         {
           "name": "ეფიქს ევრო დიზელი",
           "octane": "51",
-          "price": 4.09,
+          "price": 4.24,
           "category": "diesel"
         },
         {
           "name": "ევრო დიზელი",
           "octane": "51",
-          "price": 3.99,
+          "price": 4.14,
           "category": "diesel"
         }
       ]
@@ -716,14 +716,5 @@
       ]
     }
   },
-  "discrepancies": [
-    {
-      "company": "wissol",
-      "label": "ვისოლი",
-      "category": "diesel",
-      "priceshub": 4.14,
-      "geogid": 4.04,
-      "diff": 0.1
-    }
-  ]
+  "discrepancies": []
 }
