@@ -1,6 +1,6 @@
 {
-  "updated": "2026-08-05T22:21:31.590Z",
-  "updatedTbilisi": "6 აგვ. 2026, 02:21",
+  "updated": "2026-08-06T03:36:27.574Z",
+  "updatedTbilisi": "6 აგვ. 2026, 07:36",
   "currency": "GEL",
   "sources": [
     "priceshub.ge",
@@ -18,17 +18,6 @@
           "octane": "92"
         },
         {
-          "company": "portal",
-          "label": "პორტალი",
-          "price": 3.54,
-          "product": "ევრო რეგულარი",
-          "octane": "92/93",
-          "cross": {
-            "geogid": 3.54,
-            "diff": 0
-          }
-        },
-        {
           "company": "connect",
           "label": "ქონექთი",
           "price": 3.55,
@@ -37,6 +26,17 @@
           "cross": {
             "geogid": 3.54,
             "diff": 0.01
+          }
+        },
+        {
+          "company": "portal",
+          "label": "პორტალი",
+          "price": 3.58,
+          "product": "ევრო რეგულარი",
+          "octane": "92/93",
+          "cross": {
+            "geogid": 3.54,
+            "diff": 0.04
           }
         },
         {
@@ -99,17 +99,6 @@
           "octane": "95"
         },
         {
-          "company": "portal",
-          "label": "პორტალი",
-          "price": 3.69,
-          "product": "ეფექტ პრემიუმი",
-          "octane": "95",
-          "cross": {
-            "geogid": 3.69,
-            "diff": 0
-          }
-        },
-        {
           "company": "connect",
           "label": "ქონექთი",
           "price": 3.7,
@@ -129,6 +118,17 @@
           "cross": {
             "geogid": 3.73,
             "diff": 0
+          }
+        },
+        {
+          "company": "portal",
+          "label": "პორტალი",
+          "price": 3.73,
+          "product": "ეფექტ პრემიუმი",
+          "octane": "95",
+          "cross": {
+            "geogid": 3.69,
+            "diff": 0.04
           }
         },
         {
@@ -593,13 +593,13 @@
         {
           "name": "ეფექტ პრემიუმი",
           "octane": "95",
-          "price": 3.69,
+          "price": 3.73,
           "category": "premium"
         },
         {
           "name": "ევრო რეგულარი",
           "octane": "92/93",
-          "price": 3.54,
+          "price": 3.58,
           "category": "regular"
         },
         {
